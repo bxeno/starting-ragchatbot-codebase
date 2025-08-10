@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source Styling Test</title>
+    <link rel="stylesheet" href="style.css?v=10">
+</head>
+<body>
+    <div class="container">
+        <div class="message assistant">
+            <div class="message-content">
+                <p>Here's a test response with sources:</p>
+            </div>
+            <details class="sources-collapsible" open>
+                <summary class="sources-header">Sources</summary>
+                <div class="sources-content" id="test-sources">
+                    <!-- This will be populated by JavaScript -->
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <script>
+        // Test the new source formatting
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatSources(sources) {
+            return sources.map(source => {
+                if (typeof source === 'string') {
+                    return `<span class="source-text">${escapeHtml(source)}</span>`;
+                } else if (typeof source === 'object' && source.text) {
+                    const escapedText = escapeHtml(source.text);
+                    if (source.url) {
+                        return `<a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapedText}</a>`;
+                    } else {
+                        return `<span class="source-text">${escapedText}</span>`;
+                    }
+                }
+                return `<span class="source-text">${escapeHtml(String(source))}</span>`;
+            }).join(' ');
+        }
+
+        // Test data
+        const testSources = [
+            {"text": "Building Towards Computer Use - Lesson 0", "url": "https://learn.deeplearning.ai/lesson/intro"},
+            {"text": "Some Course - Lesson 1"}, // No URL
+            "Legacy String Source" // Old format
+        ];
+
+        // Populate the test
+        document.getElementById('test-sources').innerHTML = formatSources(testSources);
+    </script>
+</body>
+</html>
